@@ -1,0 +1,53 @@
+# Importing pandas and matplotlib
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load the data
+netflix_df = pd.read_csv("netflix_data.csv")
+netflix_df.head()
+
+# Filter out TV shows from the type
+netflix_subset = netflix_df[netflix_df["type"] != "TV Show"]
+print(netflix_subset)
+
+# Subseting my dataframe to keep a few necessary columns 
+
+netflix_movies_subset = ["title", "country", "genre", "release_year", "duration"]
+netflix_movies = netflix_subset[netflix_movies_subset]
+netflix_movies.head()
+
+# Inspect short movies by duration less than 60 mins and perform statistics
+short_movies = netflix_movies[netflix_movies["duration"] < 60]
+short_movies.head()
+statistics = short_movies.describe()
+print(statistics)
+
+# Determine average duration for release year
+average_duration = netflix_movies.groupby("release_year")["duration"].mean()
+# Assign colors to the genre groups
+colors = []
+for index, row in netflix_movies.iterrows():
+    if row["genre"] == "Children":
+        colors.append("blue")
+    elif row["genre"] == "Documentaries":
+        colors.append("red")
+    elif row["genre"] == "Stand-Up":
+        colors.append("yellow")
+    else:
+        colors.append("black")
+        
+# Create a scatter plot for movie duration by release year
+fig, ax = plt.subplots(figsize = (12, 6))
+ax.scatter(netflix_movies["release_year"], netflix_movies["duration"], 
+           c = colors)
+ax.plot(average_duration.index, average_duration.values, color = "green",
+       linestyle = "-", marker = "o", label = "Average Duration")
+ax.set_title("Movie Duration by Year of Release")
+ax.set_xlabel("Release year")
+ax.set_ylabel("Duration (min)")
+
+ax.legend()
+plt.show()
+
+answer = "no"
